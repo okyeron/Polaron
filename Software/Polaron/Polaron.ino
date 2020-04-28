@@ -20,6 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// allows teensy to become a usb host and receive midi from connected slave devices (normally teensy is a usb slave)
+// in order to use this feature you need a special cable: https://www.pjrc.com/store/cable_usb_host_t36.html
+#define ENABLE_USBHOST
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
@@ -41,9 +45,6 @@
 
 #include "USBHost_t36.h"
 
-// allows teensy to become a usb host and receive midi from connected slave devices (normally teensy is a usb slave)
-// in order to use this feature you need a special cable: https://www.pjrc.com/store/cable_usb_host_t36.html
-// #define ENABLE_USBHOST
 
 #define PULSE_WIDTH_USEC 5
 
@@ -116,9 +117,15 @@ void setup() {
     #ifdef ENABLE_USBHOST
     usbHost.begin();
     usbHostMIDI.setHandleRealTimeSystem(onRealTimeSystem);
+    usbHostMIDI.setHandleControlChange(onControlChange);
+    usbHostMIDI.setHandleNoteOn(onNoteOn);
+    usbHostMIDI.setHandleNoteOff(onNoteOff);
     #endif
 
     usbMIDI.setHandleRealTimeSystem(onRealTimeSystem);
+    usbMIDI.setHandleControlChange(onControlChange);
+    usbMIDI.setHandleNoteOn(onNoteOn);
+    usbMIDI.setHandleNoteOff(onNoteOff);
 
 
     AudioMemory(70);
@@ -291,6 +298,17 @@ void loop() {
 void onRealTimeSystem(uint8_t rtb) {
     sequencer.onMidiInput(rtb);
 }
+
+void onControlChange(byte channel, byte control, byte value) {
+	// placeholder for incoming CCs
+}
+void onNoteOn(byte channel, byte note, byte velocity) {
+	// placeholder for incoming noteon
+}
+void onNoteOff(byte channel, byte note, byte velocity) {
+	// placeholder for incoming noteoff
+}
+
 
 void onTriggerInputFell(){
     cli();

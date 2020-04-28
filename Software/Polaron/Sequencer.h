@@ -55,7 +55,7 @@
 #define BUTTON_SET_PATTERN 7
 
 // experimental feature: output triggers / track params as midi
-// #define SEND_MIDI_OUTPUT
+#define SEND_MIDI_OUTPUT
 
 // led config
 #define NUM_LEDS NUMBER_OF_FUNCTIONBUTTONS + NUMBER_OF_TRACKBUTTONS + NUMBER_OF_STEPBUTTONS

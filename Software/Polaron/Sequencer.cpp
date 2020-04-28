@@ -128,6 +128,14 @@ void Sequencer::start() {
     if (!running) {
         running = true;
         clock.onStart();
+        #ifdef SEND_MIDI_OUTPUT
+          usbMIDI.sendRealTime(usbMIDI.Start);
+          Serial.println("midi start");
+        #endif
+        #ifdef ENABLE_USBHOST
+          usbHostMIDI.sendRealTime(usbMIDI.Start);
+          Serial.println("host midi start");
+        #endif
     }
 }
 
@@ -138,6 +146,14 @@ void Sequencer::stop() {
             tracks[i].onStop();
         }
         clock.onStop();
+        #ifdef SEND_MIDI_OUTPUT
+          usbMIDI.sendRealTime(usbMIDI.Stop);
+          Serial.println("midi start");
+        #endif
+        #ifdef ENABLE_USBHOST
+          usbHostMIDI.sendRealTime(usbMIDI.Stop);
+          Serial.println("host midi stop");
+        #endif
     }
 }
 
@@ -674,7 +690,10 @@ void Sequencer::onMidiInput(uint8_t rtb) {
             clock.setClockMode(ClockMode::INTERNAL_CLOCK);
             stop();
             break;
-        //case 0xFB:  // Continue
+        case 251:  // Continue
+            clock.setClockMode(ClockMode::MIDI_CLOCK);
+            start();
+            break;
         //case 0xFE:  // ActiveSensing
         //case 0xFF:  // SystemReset
         //    break;
